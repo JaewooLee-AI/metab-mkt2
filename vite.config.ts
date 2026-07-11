@@ -30,13 +30,13 @@ const localApiPlugin = () => ({
           
           if (isGenerate) {
             // Lazily import the generation logic module to avoid boot-time bundling issues in config
-            const { handleGenerationLogic } = await import('./api/generate-logic.ts');
+            const { handleGenerationLogic } = await import('./api/generate.ts');
             const result = await handleGenerationLogic(parsedBody);
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify(result));
           } else {
             // Lazily import the analyze logic module
-            const { handleAnalyzeLogic } = await import('./api/analyze-logic.ts');
+            const { handleAnalyzeLogic } = await import('./api/analyze.ts');
             const result = await handleAnalyzeLogic(parsedBody);
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify(result));
