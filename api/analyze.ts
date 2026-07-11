@@ -137,11 +137,18 @@ ${sourceText}`;
   }
 
   try {
-    const parsedData = JSON.parse(textResult);
+    let cleanedText = textResult.trim();
+    if (cleanedText.startsWith('```')) {
+      cleanedText = cleanedText.replace(/^```json\s*/i, '').replace(/```$/, '').trim();
+    }
+    const parsedData = JSON.parse(cleanedText);
     return parsedData;
-  } catch (err) {
+  } catch (err: any) {
     console.error('Failed to parse JSON response from Gemini:', textResult, err);
-    throw { status: 500, message: '분석 결과의 JSON 파싱에 실패했습니다.' };
+    throw { 
+      status: 500, 
+      message: `분석 결과의 JSON 파싱에 실패했습니다. (응답 길이: ${textResult.length}자) 에러: ${err.message}. 응답 내용 일부: ${textResult.substring(0, 150)}` 
+    };
   }
 }
 
