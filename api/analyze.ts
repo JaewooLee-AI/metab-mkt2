@@ -138,8 +138,10 @@ ${sourceText}`;
 
   try {
     let cleanedText = textResult.trim();
-    if (cleanedText.startsWith('```')) {
-      cleanedText = cleanedText.replace(/^```json\s*/i, '').replace(/```$/, '').trim();
+    const firstBrace = cleanedText.indexOf('{');
+    const lastBrace = cleanedText.lastIndexOf('}');
+    if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+      cleanedText = cleanedText.substring(firstBrace, lastBrace + 1);
     }
     const parsedData = JSON.parse(cleanedText);
     return parsedData;

@@ -1,0 +1,55 @@
+- generic [ref=f2e3]:
+  - banner [ref=f2e4]:
+    - generic [ref=f2e5]:
+      - generic [ref=f2e11]:
+        - heading "Questour B2C Marketing Factory" [level=1] [ref=f2e12]:
+          - text: Questour
+          - generic [ref=f2e13]: B2C Marketing Factory
+        - paragraph [ref=f2e14]: 메타비 전용 OSMU 마케팅 카피 대시보드
+      - generic [ref=f2e15]:
+        - generic [ref=f2e16]: Gemini API 연동 (gemini-3.5-flash)
+        - button "설정 열기" [ref=f2e18]
+  - main [ref=f2e22]:
+    - generic [ref=f2e23]:
+      - heading "콘텐츠 빌더 설정" [level=2] [ref=f2e25]
+      - generic [ref=f2e29]:
+        - generic [ref=f2e30]: 타겟 페르소나 선택
+        - combobox [ref=f2e32] [cursor=pointer]:
+          - option "2030 커플" [selected]
+          - option "3040 학부모"
+          - option "방탈출 매니아"
+      - generic [ref=f2e33]:
+        - generic [ref=f2e34]: 선택 페르소나 전략 분석
+        - generic [ref=f2e38]:
+          - generic [ref=f2e39]: "고객 Pain Point:"
+          - paragraph [ref=f2e40]: 식당, 카페, 영화관 등 공간이 제한된 뻔한 데이트 코스에 대한 권태로움
+        - generic [ref=f2e41]:
+          - generic [ref=f2e42]: "시스템 전략 훅:"
+          - paragraph [ref=f2e43]: "\"실내 자물쇠 풀기의 답답함과 단절감을 비판하고, 탁 트인 지역 명소 전체가 이색적이고 거대한 놀이터로 변하는 극적인 스케일을 강조하라.\""
+      - generic [ref=f2e44]:
+        - generic [ref=f2e45]:
+          - generic [ref=f2e46]: 기획안 원문 입력 (Source Text)
+          - generic [ref=f2e47]: 231 자
+        - textbox "여기에 야외 방탈출 콘텐츠의 원본 기획안 또는 미션 개요를 입력해 주세요." [ref=f2e48]: "여주 영릉(세종대왕릉) 역사 탐험 미션: 소리박물관의 도난당한 비밀 유물을 찾아서 - 지역: 경기도 여주 - 주요 로케이션: 여주 세종대왕릉, 명성황후 생가, 곤충박물관, 여주 세종국악당(소리박물관) - 미션 개요: 스마트폰 GPS 지령을 활용해 세종대왕과 명성황후의 생애 역사적 팩트를 자연스럽게 탐사하고, 마지막 소리박물관에서 미제 주파수를 맞추어 도난당한 보물 유물을 회수하는 에듀테인먼트 야외 추리 게임."
+      - button "마케팅 에셋 팩토리 가동" [ref=f2e49]
+    - generic [ref=f2e54]:
+      - generic [ref=f2e55]:
+        - generic [ref=f2e56]:
+          - heading "4대 채널 OSMU 대시보드" [level=2] [ref=f2e57]
+          - generic [ref=f2e58]: OSMU 가동
+        - generic [ref=f2e59]: 원본 1개로 숏폼, 블로그, 맘카페, 상세페이지 문구를 동시 퍼블리싱
+      - generic [ref=f2e60]:
+        - article [ref=f2e61]:
+          - heading "숏폼 비디오 대본 (Shorts)" [level=3] [ref=f2e66]
+          - paragraph [ref=f2e73]: 기획안 원문을 입력하고 빌더에서 팩토리를 작동하여 카피를 생성해 보세요.
+        - article [ref=f2e74]:
+          - heading "네이버 블로그 리뷰 (Blog)" [level=3] [ref=f2e79]
+          - paragraph [ref=f2e86]: 기획안 원문을 입력하고 빌더에서 팩토리를 작동하여 카피를 생성해 보세요.
+        - article [ref=f2e87]:
+          - heading "지역 맘카페 바이럴 (Cafe)" [level=3] [ref=f2e92]
+          - paragraph [ref=f2e99]: 기획안 원문을 입력하고 빌더에서 팩토리를 작동하여 카피를 생성해 보세요.
+        - article [ref=f2e100]:
+          - heading "예매 상세페이지 카피 (Sales)" [level=3] [ref=f2e107]
+          - paragraph [ref=f2e114]: 기획안 원문을 입력하고 빌더에서 팩토리를 작동하여 카피를 생성해 보세요.
+  - contentinfo [ref=f2e115]:
+    - paragraph [ref=f2e116]: © 2026 Questour B2C Marketing Factory. All rights reserved.
