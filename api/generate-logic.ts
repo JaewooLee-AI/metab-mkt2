@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import { getSystemPrompt } from '../src/prompts.ts';
 
 async function fetchWithRetry(url: string, options: any, retries = 3, delay = 1000): Promise<Response> {
@@ -44,8 +46,6 @@ export async function handleGenerationLogic(body: any) {
   // Fallback: manually read local .env file if it exists and process.env is not populated
   if (!apiKey) {
     try {
-      const fs = await import('fs');
-      const path = await import('path');
       const envPath = path.resolve(process.cwd(), '.env');
       if (fs.existsSync(envPath)) {
         const envContent = fs.readFileSync(envPath, 'utf8');

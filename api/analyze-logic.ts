@@ -1,3 +1,6 @@
+import fs from 'fs';
+import path from 'path';
+
 async function fetchWithRetry(url: string, options: any, retries = 3, delay = 1000): Promise<Response> {
   for (let i = 0; i < retries; i++) {
     try {
@@ -42,8 +45,6 @@ export async function handleAnalyzeLogic(body: any) {
   // Fallback: manually read local .env file if it exists and process.env is not populated
   if (!apiKey) {
     try {
-      const fs = await import('fs');
-      const path = await import('path');
       const envPath = path.resolve(process.cwd(), '.env');
       if (fs.existsSync(envPath)) {
         const envContent = fs.readFileSync(envPath, 'utf8');
