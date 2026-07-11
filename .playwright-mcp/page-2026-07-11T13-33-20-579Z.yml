@@ -1,0 +1,55 @@
+- generic [ref=f3e3]:
+  - banner [ref=f3e4]:
+    - generic [ref=f3e5]:
+      - generic [ref=f3e11]:
+        - heading "Questour B2C Marketing Factory" [level=1] [ref=f3e12]:
+          - text: Questour
+          - generic [ref=f3e13]: B2C Marketing Factory
+        - paragraph [ref=f3e14]: 메타비 전용 OSMU 마케팅 카피 대시보드
+      - generic [ref=f3e15]:
+        - generic [ref=f3e16]: Gemini API 연동 (gemini-3.5-flash)
+        - button "설정 열기" [ref=f3e18]
+  - main [ref=f3e22]:
+    - generic [ref=f3e23]:
+      - heading "콘텐츠 빌더 설정" [level=2] [ref=f3e25]
+      - generic [ref=f3e29]:
+        - generic [ref=f3e30]: 타겟 페르소나 선택
+        - combobox [ref=f3e32] [cursor=pointer]:
+          - option "2030 커플" [selected]
+          - option "3040 학부모"
+          - option "방탈출 매니아"
+      - generic [ref=f3e33]:
+        - generic [ref=f3e34]: 선택 페르소나 전략 분석
+        - generic [ref=f3e38]:
+          - generic [ref=f3e39]: "고객 Pain Point:"
+          - paragraph [ref=f3e40]: 식당, 카페, 영화관 등 공간이 제한된 뻔한 데이트 코스에 대한 권태로움
+        - generic [ref=f3e41]:
+          - generic [ref=f3e42]: "시스템 전략 훅:"
+          - paragraph [ref=f3e43]: "\"실내 자물쇠 풀기의 답답함과 단절감을 비판하고, 탁 트인 지역 명소 전체가 이색적이고 거대한 놀이터로 변하는 극적인 스케일을 강조하라.\""
+      - generic [ref=f3e44]:
+        - generic [ref=f3e45]:
+          - generic [ref=f3e46]: 기획안 원문 입력 (Source Text)
+          - generic [ref=f3e47]: 1392 자
+        - textbox "여기에 야외 방탈출 콘텐츠의 원본 기획안 또는 미션 개요를 입력해 주세요." [ref=f3e48]: "삼청동 시공간의 틈: 조선 비밀 설계사의 잃어버린 기록 공간적 배경 및 탐방 장소: 전통과 현대가 공존하는 삼청동 골목길 및 북촌 한옥마을 일대입니다. 이 지역은 가파른 경사로와 구불구불한 골목길, 그리고 돌계단과 기와지붕이 겹겹이 쌓인 독특한 수직적 입체감을 자랑합니다. GPS 신호가 미세하게 요동치는 한옥 밀집 지역의 골목적 특성을 역으로 활용하여, 플레이어가 마치 시간의 미로 속에 갇힌 듯한 물리적 공간감을 느끼게 합니다. 현대적인 갤러리와 세련된 카페들 사이사이에 숨겨진 오래된 돌담길, 전통 가옥의 솟을대문, 디딤돌, 그리고 삼청동 특유의 아기자기한 이정표들이 스마트폰 GPS 지도상의 퀘스트 포인트와 정밀하게 매핑되어 탐험의 현실감을 극대화합니다. 교육적 가치 및 역사 팩트: 조선 시대 한양의 북쪽에 위치해 권력과 부의 상징이었던 '북촌'의 역사적 맥락을 깊이 있게 다룹니다. 삼청(三淸: 산이 맑고, 물이 맑고, 사람의 인심 또한 맑다)이라는 지명의 유래에서 시작하여, 친환경적이고 지혜로운 한옥의 구조(배산임수 법칙, 온돌과 대청마루의 냉난방 과학, 기와에 새겨진 길상 문양의 의미)를 직접 체험하며 배울 수 있도록 설계했습니다. 또한 개화기 시절 삼청동 일대에서 활동했던 역사적 인물들의 가상 발자취를 추적하며, 전통을 지키려 했던 이들과 새로운 문물을 수용하려 했던 이들의 갈등과 화합의 이야기를 자연스럽게 학습하게 만드는 에듀테인먼트적 가치를 제공합니다. 미션 및 퍼즐 기믹 특성: 스마트폰의 고도 센서와 카메라 기능을 적극 활용한 하이브리드 미션 기믹이 특징입니다. 예컨대, 플레이어가 북촌의 고지대에 올라 특정 기와지붕 라인을 카메라 프리뷰 화면에 맞추면 AR(증강현실)로 조선 시대의 풍경이 오버레이되는 '시공간 매칭 퍼즐', 전통 한옥 대문에 그려진 문양을 분석하여 스마트폰 화면에 터치 드로잉으로 부적을 완성하는 '전통 문양 해독', 삼청동 돌담길의 특정 벽돌 개수와 GPS 상의 좌표를 연립방정식처럼 조합하여 비밀번호를 유추하는 '지형지물 융합 퍼즐' 등이 포함됩니다. 자이로 센서를 이용하여 가상 물걸레로 전통 마루를 닦아 숨겨진 문양을 드러내게 하는 스크린 인터랙션 기믹도 도입하여 몰입감을 증폭시킵니다. 예상 플레이 및 난이도: 예상 소요 시간은 약 90분에서 120분 내외이며, 전체 걷는 거리는 약 2.2km 수준입니다. 북촌 특유의 언덕길과 가파른 돌계단이 포함되어 있어 체력적 난이도는 '중(Medium)' 수준으로 설정하되, 경사 구간 중간중간에 삼청동의 고즈넉한 전통 찻집이나 이색 카페를 미션 거점으로 설정하여 플레이어가 자연스럽게 쉬어갈 수 있도록 유도합니다. 퍼즐 난이도는 관찰력과 직관력을 요하는 문제 위주로 구성되어 있어 가족, 연인, 친구 단위의 초심자들도 큰 스트레스 없이 몰입의 재미를 느낄 수 있는 난이도로 제안합니다."
+      - button "마케팅 에셋 팩토리 가동" [ref=f3e49]
+    - generic [ref=f3e54]:
+      - generic [ref=f3e55]:
+        - generic [ref=f3e56]:
+          - heading "4대 채널 OSMU 대시보드" [level=2] [ref=f3e57]
+          - generic [ref=f3e58]: OSMU 가동
+        - generic [ref=f3e59]: 원본 1개로 숏폼, 블로그, 맘카페, 상세페이지 문구를 동시 퍼블리싱
+      - generic [ref=f3e60]:
+        - article [ref=f3e61]:
+          - heading "숏폼 비디오 대본 (Shorts)" [level=3] [ref=f3e66]
+          - paragraph [ref=f3e73]: 기획안 원문을 입력하고 빌더에서 팩토리를 작동하여 카피를 생성해 보세요.
+        - article [ref=f3e74]:
+          - heading "네이버 블로그 리뷰 (Blog)" [level=3] [ref=f3e79]
+          - paragraph [ref=f3e86]: 기획안 원문을 입력하고 빌더에서 팩토리를 작동하여 카피를 생성해 보세요.
+        - article [ref=f3e87]:
+          - heading "지역 맘카페 바이럴 (Cafe)" [level=3] [ref=f3e92]
+          - paragraph [ref=f3e99]: 기획안 원문을 입력하고 빌더에서 팩토리를 작동하여 카피를 생성해 보세요.
+        - article [ref=f3e100]:
+          - heading "예매 상세페이지 카피 (Sales)" [level=3] [ref=f3e107]
+          - paragraph [ref=f3e114]: 기획안 원문을 입력하고 빌더에서 팩토리를 작동하여 카피를 생성해 보세요.
+  - contentinfo [ref=f3e115]:
+    - paragraph [ref=f3e116]: © 2026 Questour B2C Marketing Factory. All rights reserved.
