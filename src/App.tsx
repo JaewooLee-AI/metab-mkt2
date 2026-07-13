@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Sparkles, 
   Settings, 
@@ -13,14 +13,19 @@ import {
   Lock,
   ChevronDown,
   Info,
-  Loader2
+  Loader2,
+  Image as ImageIcon,
+  Heart,
+  MessageCircle,
+  Send,
+  Bookmark
 } from 'lucide-react';
 import { PERSONAS, type PersonaType } from './prompts';
 import { generateMarketingCopy, analyzeProposal } from './gemini';
 import type { AnalysisData } from './mockData';
 import { MarkdownRenderer } from './components/MarkdownRenderer';
 
-type ChannelType = 'shorts' | 'blog' | 'cafe' | 'sales';
+type ChannelType = 'shorts' | 'blog' | 'cafe' | 'sales' | 'instagram';
 
 export default function App() {
   // 1. App State
@@ -51,18 +56,21 @@ export default function App() {
     blog: false,
     cafe: false,
     sales: false,
+    instagram: false,
   });
   const [results, setResults] = useState<Record<ChannelType, string>>({
     shorts: '',
     blog: '',
     cafe: '',
     sales: '',
+    instagram: '',
   });
   const [errors, setErrors] = useState<Record<ChannelType, string | null>>({
     shorts: null,
     blog: null,
     cafe: null,
     sales: null,
+    instagram: null,
   });
 
   const [analysisResult, setAnalysisResult] = useState<{
@@ -103,9 +111,9 @@ export default function App() {
 
     // Reset and set loading for Step 1 analysis and channels
     setAnalysisResult({ data: null, loading: true, error: null });
-    setLoading({ shorts: true, blog: true, cafe: true, sales: true });
-    setErrors({ shorts: null, blog: null, cafe: null, sales: null });
-    setResults({ shorts: '', blog: '', cafe: '', sales: '' });
+    setLoading({ shorts: true, blog: true, cafe: true, sales: true, instagram: true });
+    setErrors({ shorts: null, blog: null, cafe: null, sales: null, instagram: null });
+    setResults({ shorts: '', blog: '', cafe: '', sales: '', instagram: '' });
 
     // Step 1: Run Context Analysis
     let analyzedData: AnalysisData | null = null;
@@ -126,14 +134,15 @@ export default function App() {
         blog: '분석 단계 실패로 생성이 취소되었습니다.',
         cafe: '분석 단계 실패로 생성이 취소되었습니다.',
         sales: '분석 단계 실패로 생성이 취소되었습니다.',
+        instagram: '분석 단계 실패로 생성이 취소되었습니다.',
       });
-      setLoading({ shorts: false, blog: false, cafe: false, sales: false });
+      setLoading({ shorts: false, blog: false, cafe: false, sales: false, instagram: false });
       setIsGenerating(false);
       return;
     }
 
-    // Step 2: Trigger parallel calls for 4 channels with the richly expanded analysis context
-    const channels: ChannelType[] = ['shorts', 'blog', 'cafe', 'sales'];
+    // Step 2: Trigger parallel calls for 5 channels with the richly expanded analysis context
+    const channels: ChannelType[] = ['shorts', 'blog', 'cafe', 'sales', 'instagram'];
     const richSourceText = analyzedData ? `
 [기획안 분석 데이터]
 - 추천 퀘스트 타이틀: ${analyzedData.title}
@@ -581,6 +590,23 @@ export default function App() {
               onRefine={(inst) => handleRefineChannel('sales', inst)}
             />
 
+            {/* --- CARD 5: INSTAGRAM --- */}
+            <div className="md:col-span-2">
+              <InstagramChannelCard
+                title="인스타그램 피드 & 이미지 생성 (Instagram)"
+                channel="instagram"
+                icon={<InstagramIcon className="w-4 h-4 text-pink-500" />}
+                loading={loading.instagram}
+                content={results.instagram}
+                error={errors.instagram}
+                copied={copiedChannel === 'instagram'}
+                onCopy={(txt) => handleCopyToClipboard('instagram', txt)}
+                onRetry={() => handleRetryChannel('instagram')}
+                onRefine={(inst) => handleRefineChannel('instagram', inst)}
+                persona={targetPersona}
+              />
+            </div>
+
           </div>
         </section>
       </main>
@@ -771,6 +797,429 @@ const ChannelCard: React.FC<ChannelCardProps> = ({
                 value={customInstruction}
                 onChange={(e) => setCustomInstruction(e.target.value)}
                 placeholder="예: 존댓말로 변경해줘, 이벤트 혜택 강조해줘..."
+                className="bg-slate-950 border border-slate-800 rounded-lg px-2 py-1.5 text-xs text-slate-100 placeholder-slate-650 focus:outline-none focus:border-brand-orange transition-colors flex-grow"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleRefineSubmit(customInstruction);
+                }}
+              />
+              <button
+                onClick={() => handleRefineSubmit(customInstruction)}
+                className="bg-brand-orange hover:bg-brand-orange/95 text-white font-medium rounded-lg px-3 py-1.5 text-xs transition-colors shrink-0 cursor-pointer"
+              >
+                적용
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+    </article>
+  );
+};
+
+// 📷 Local Instagram SVG Icon to avoid version issues
+const InstagramIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    viewBox="0 0 24 24"
+    width="24"
+    height="24"
+    stroke="currentColor"
+    strokeWidth="2"
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+  </svg>
+);
+
+// 📦 Custom Instagram Card Component
+interface InstagramChannelCardProps {
+  title: string;
+  channel: ChannelType;
+  icon: React.ReactNode;
+  loading: boolean;
+  content: string;
+  error: string | null;
+  copied: boolean;
+  onCopy: (text: string) => void;
+  onRetry: () => void;
+  onRefine: (instruction: string) => void;
+  persona: PersonaType;
+}
+
+const InstagramChannelCard: React.FC<InstagramChannelCardProps> = ({
+  title,
+  icon,
+  loading,
+  content,
+  error,
+  onRetry,
+  onRefine,
+  persona,
+}) => {
+  const [showRefine, setShowRefine] = useState(false);
+  const [customInstruction, setCustomInstruction] = useState('');
+  const [editablePrompt, setEditablePrompt] = useState('');
+  const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+
+  // Parse structured content
+  const { prompt, caption, hashtags } = useMemo(() => {
+    if (!content) return { prompt: '', caption: '', hashtags: '' };
+    const promptRegex = /\[영문 프롬프트\]([\s\S]*?)(?=\[인스타 캡션\]|\[해시태그\]|$)/i;
+    const captionRegex = /\[인스타 캡션\]([\s\S]*?)(?=\[영문 프롬프트\]|\[해시태그\]|$)/i;
+    const hashtagsRegex = /\[해시태그\]([\s\S]*?)(?=\[영문 프롬프트\]|\[인스타 캡션\]|$)/i;
+    
+    const pMatch = content.match(promptRegex);
+    const cMatch = content.match(captionRegex);
+    const hMatch = content.match(hashtagsRegex);
+    
+    const cleanContent = (text: string) => {
+      let result = text.trim();
+      if (result.startsWith('(') && result.endsWith(')')) {
+        result = result.substring(1, result.length - 1).trim();
+      }
+      return result;
+    };
+
+    return {
+      prompt: pMatch ? cleanContent(pMatch[1]) : '',
+      caption: cMatch ? cleanContent(cMatch[1]) : '',
+      hashtags: hMatch ? cleanContent(hMatch[1]) : '',
+    };
+  }, [content]);
+
+  // Sync editable prompt when content finishes loading
+  useEffect(() => {
+    if (prompt) {
+      setEditablePrompt(prompt);
+      setGeneratedImageUrl(null); // Reset generated image when prompt changes
+    }
+  }, [prompt]);
+
+  const handleRefineSubmit = (inst: string) => {
+    if (!inst.trim()) return;
+    onRefine(inst);
+    setCustomInstruction('');
+    setShowRefine(false);
+  };
+
+  const handleGenerateImage = () => {
+    if (!editablePrompt.trim()) return;
+    setIsGeneratingImage(true);
+    // Use pollinations.ai for client-side dynamic image generation
+    const seed = Math.floor(Math.random() * 1000000);
+    const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(editablePrompt)}?width=1080&height=1080&nologo=true&seed=${seed}`;
+    
+    const img = new Image();
+    img.src = url;
+    img.onload = () => {
+      setGeneratedImageUrl(url);
+      setIsGeneratingImage(false);
+    };
+    img.onerror = () => {
+      setGeneratedImageUrl(url);
+      setIsGeneratingImage(false);
+    };
+  };
+
+  const [copiedPrompt, setCopiedPrompt] = useState(false);
+  const [copiedCaption, setCopiedCaption] = useState(false);
+
+  const handleCopyPrompt = () => {
+    navigator.clipboard.writeText(editablePrompt).then(() => {
+      setCopiedPrompt(true);
+      setTimeout(() => setCopiedPrompt(false), 2000);
+    });
+  };
+
+  const handleCopyCaption = () => {
+    const fullText = `${caption}\n\n${hashtags}`;
+    navigator.clipboard.writeText(fullText).then(() => {
+      setCopiedCaption(true);
+      setTimeout(() => setCopiedCaption(false), 2000);
+    });
+  };
+
+  return (
+    <article className={`bg-slate-900/60 rounded-2xl border backdrop-blur-md transition-all flex flex-col min-h-[580px] overflow-hidden ${
+      error 
+        ? 'border-red-900/50 hover:border-red-900 shadow-lg shadow-red-950/10' 
+        : content 
+          ? 'border-slate-800 hover:border-slate-700 shadow-md' 
+          : 'border-slate-900/80 opacity-70'
+    }`}>
+      
+      {/* Card Header */}
+      <div className="bg-slate-900/40 px-4 py-3 border-b border-slate-800/80 flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-2">
+          {icon}
+          <h3 className="text-xs font-semibold text-slate-200 tracking-wide">{title}</h3>
+        </div>
+        
+        {/* Top Right Utilities */}
+        <div className="flex items-center gap-2">
+          {content && !loading && !error && (
+            <button
+              onClick={onRetry}
+              className="flex items-center gap-1 text-[10px] px-2 py-1 rounded bg-slate-950 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+              title="처음부터 다시 생성"
+            >
+              <RotateCcw className="w-3 h-3" />
+              <span>재수행</span>
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Card Body */}
+      <div className="flex-grow p-5 overflow-y-auto min-h-0 bg-slate-950/20">
+        {loading ? (
+          /* Animated Skeleton Loading State */
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full items-center">
+            <div className="space-y-3.5 animate-pulse pt-2">
+              <div className="h-3.5 bg-slate-800 rounded w-1/3"></div>
+              <div className="h-10 bg-slate-800 rounded w-full"></div>
+              <div className="h-6 bg-slate-800 rounded w-1/2"></div>
+              <div className="space-y-2 pt-4 border-t border-slate-800/40">
+                <div className="h-3 bg-slate-800 rounded w-1/4"></div>
+                <div className="h-20 bg-slate-800 rounded"></div>
+              </div>
+            </div>
+            <div className="flex justify-center items-center">
+              <div className="w-[280px] h-[360px] bg-slate-850 rounded-xl border border-slate-800/60 animate-pulse flex flex-col justify-between p-4">
+                <div className="flex gap-2 items-center">
+                  <div className="w-6 h-6 rounded-full bg-slate-800"></div>
+                  <div className="w-20 h-2 bg-slate-800 rounded"></div>
+                </div>
+                <div className="flex-grow my-4 bg-slate-800 rounded-lg"></div>
+                <div className="w-full h-4 bg-slate-800 rounded"></div>
+              </div>
+            </div>
+          </div>
+        ) : error ? (
+          /* Error Fallback State */
+          <div className="flex flex-col items-center justify-center h-full text-center p-4">
+            <AlertCircle className="w-8 h-8 text-red-500 mb-2" />
+            <h4 className="text-sm font-semibold text-slate-300">콘텐츠 생성 지연</h4>
+            <p className="text-xs text-slate-500 mt-1 mb-4 max-w-[200px] leading-relaxed">
+              {error}
+            </p>
+            <button
+              onClick={onRetry}
+              className="flex items-center gap-1.5 bg-red-950/50 hover:bg-red-950 text-red-400 border border-red-900/60 rounded-xl px-4 py-2 text-xs font-semibold transition-all hover:scale-105 active:scale-95 cursor-pointer"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>재시도</span>
+            </button>
+          </div>
+        ) : content ? (
+          /* Display custom side-by-side Layout */
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full items-stretch">
+            {/* Editor Area (Left Column) */}
+            <div className="flex flex-col gap-4 justify-between">
+              
+              {/* Step 1: English Prompt Editor */}
+              <div className="flex flex-col gap-2">
+                <div className="flex justify-between items-center">
+                  <label className="text-xs font-semibold text-slate-400">Step 1: 영문 이미지 프롬프트 (편집 가능)</label>
+                  <button
+                    onClick={handleCopyPrompt}
+                    className="text-[10px] text-slate-400 hover:text-white flex items-center gap-1 border border-slate-800 px-2 py-0.5 rounded bg-slate-950 transition-colors"
+                  >
+                    {copiedPrompt ? (
+                      <>
+                        <Check className="w-3 h-3 text-emerald-400" />
+                        <span className="text-emerald-400">복사 완료!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3 h-3" />
+                        <span>복사</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+                <textarea
+                  value={editablePrompt}
+                  onChange={(e) => setEditablePrompt(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 placeholder-slate-650 focus:outline-none focus:border-brand-orange resize-none h-28"
+                />
+                <button
+                  onClick={handleGenerateImage}
+                  disabled={isGeneratingImage || !editablePrompt}
+                  className="py-2.5 px-3 bg-brand-orange hover:bg-brand-orange/95 hover:scale-[1.01] active:scale-[0.99] disabled:scale-100 disabled:bg-slate-800 disabled:text-slate-600 rounded-xl text-xs font-semibold text-white transition-all flex items-center justify-center gap-1.5 shadow-md shadow-brand-orange/10 cursor-pointer"
+                >
+                  {isGeneratingImage ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ImageIcon className="w-3.5 h-3.5" />}
+                  {isGeneratingImage ? 'AI가 이미지 그리는 중...' : '인스타그램 이미지 생성하기 (Flow)'}
+                </button>
+              </div>
+
+              {/* Step 2: Instagram Caption Viewer */}
+              <div className="flex flex-col gap-2 flex-grow min-h-0">
+                <div className="flex justify-between items-center border-t border-slate-800/40 pt-3">
+                  <label className="text-xs font-semibold text-slate-400">Step 2: 인스타그램 본문 피드 캡션</label>
+                  <button
+                    onClick={handleCopyCaption}
+                    className="text-[10px] text-slate-400 hover:text-white flex items-center gap-1 border border-slate-800 px-2 py-0.5 rounded bg-slate-950 transition-colors"
+                  >
+                    {copiedCaption ? (
+                      <>
+                        <Check className="w-3 h-3 text-emerald-400" />
+                        <span className="text-emerald-400">복사 완료!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3 h-3" />
+                        <span>복사</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+                <div className="bg-slate-950/60 rounded-xl border border-slate-800/80 p-3.5 overflow-y-auto max-h-48 text-xs text-slate-300 leading-relaxed font-sans whitespace-pre-wrap flex-grow">
+                  {caption || '본문 생성 실패. 재생성을 이용해 주세요.'}
+                  {hashtags && <div className="text-sky-400 mt-3 font-medium">{hashtags}</div>}
+                </div>
+              </div>
+
+            </div>
+
+            {/* Instagram Feed Mockup Preview (Right Column) */}
+            <div className="flex items-center justify-center bg-slate-950/30 rounded-2xl border border-slate-800/40 p-4 min-h-[360px]">
+              <div className="w-full max-w-[280px] bg-slate-900 rounded-xl border border-slate-800/60 shadow-xl overflow-hidden text-xs flex flex-col">
+                {/* Header */}
+                <div className="px-3 py-2 flex items-center justify-between border-b border-slate-800/40 shrink-0">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 p-[1.5px]">
+                      <div className="w-full h-full rounded-full bg-slate-950 flex items-center justify-center overflow-hidden">
+                        <Sparkles className="w-3 h-3 text-brand-orange" />
+                      </div>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="font-semibold text-[10px] text-slate-200">questour_official</span>
+                      <span className="text-[8px] text-slate-500 font-light">{PERSONAS[persona].name} · Yeoju</span>
+                    </div>
+                  </div>
+                  <span className="text-slate-400 hover:text-white cursor-pointer font-bold">•••</span>
+                </div>
+                
+                {/* Image Canvas */}
+                <div className="aspect-square bg-slate-950 relative flex items-center justify-center overflow-hidden group shrink-0">
+                  {isGeneratingImage ? (
+                    <div className="absolute inset-0 bg-slate-950/95 flex flex-col items-center justify-center gap-3 p-4 text-center">
+                      <Loader2 className="w-6 h-6 animate-spin text-brand-orange" />
+                      <div className="space-y-1 px-2">
+                        <span className="text-[10px] font-semibold text-slate-200 block">AI 이미지 렌더링 중</span>
+                        <span className="text-[8px] text-slate-500 leading-normal block">영문 프롬프트를 분석해 1:1 인스타 이미지를 실시간 드로잉하고 있습니다...</span>
+                      </div>
+                    </div>
+                  ) : generatedImageUrl ? (
+                    <img 
+                      src={generatedImageUrl} 
+                      alt="Generated Instagram content" 
+                      className="w-full h-full object-cover transition-all duration-500 group-hover:scale-102" 
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center text-center p-6 text-slate-600 gap-2.5">
+                      <div className="w-9 h-9 rounded-full border border-dashed border-slate-800 flex items-center justify-center bg-slate-950">
+                        <ImageIcon className="w-4 h-4 text-slate-700 animate-pulse" />
+                      </div>
+                      <p className="text-[9px] leading-relaxed max-w-[170px] text-slate-500">
+                        왼쪽 프롬프트를 기반으로 실시간 인스타그램 맞춤 AI 이미지를 생성해 보세요.
+                      </p>
+                      <button
+                        onClick={handleGenerateImage}
+                        className="py-1 px-3 bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-lg text-[9px] font-semibold text-slate-300 transition-colors cursor-pointer"
+                      >
+                        이미지 생성 가동
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Actions */}
+                <div className="px-3 py-2 flex items-center justify-between shrink-0">
+                  <div className="flex items-center gap-3">
+                    <Heart className={`w-4 h-4 cursor-pointer hover:scale-110 active:scale-90 transition-transform ${generatedImageUrl ? 'text-red-500 fill-red-500' : 'text-slate-400'}`} />
+                    <MessageCircle className="w-4 h-4 text-slate-400 cursor-pointer hover:scale-110 transition-transform" />
+                    <Send className="w-4 h-4 text-slate-400 cursor-pointer hover:scale-110 transition-transform" />
+                  </div>
+                  <Bookmark className="w-4 h-4 text-slate-400 cursor-pointer hover:scale-110 transition-transform" />
+                </div>
+
+                {/* Info & Text */}
+                <div className="px-3 pb-3 shrink-0 flex flex-col gap-1 border-t border-slate-800/10 pt-1.5 min-h-[64px]">
+                  <span className="font-semibold text-[9px] text-slate-300">Liked by 1,248 users</span>
+                  <div className="text-[9px] leading-relaxed text-slate-300 line-clamp-2">
+                    <span className="font-bold text-slate-200 mr-1.5">questour_official</span>
+                    {caption || '여주 세종대왕릉 역사 탐험 미션!'}
+                  </div>
+                  {hashtags && (
+                    <span className="text-[9px] text-sky-500 font-medium line-clamp-1">{hashtags}</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* Initial Empty/Idle State */
+          <div className="flex flex-col items-center justify-center h-full text-center p-8 text-slate-650 min-h-[300px]">
+            <div className="w-12 h-12 rounded-full border border-dashed border-slate-800 flex items-center justify-center mb-3">
+              <InstagramIcon className="w-5 h-5 text-slate-700 animate-pulse" />
+            </div>
+            <p className="text-xs leading-relaxed max-w-[240px] text-slate-500">
+              기획안 원문을 입력하고 빌더에서 팩토리를 작동하여 영문 이미지 프롬프트와 인스타 카피를 생성해 보세요.
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Refinement Panel at the bottom of the card */}
+      {content && !loading && !error && (
+        <div className="bg-slate-900/80 border-t border-slate-800/80 p-3 shrink-0 flex flex-col gap-2">
+          {/* Quick Refine Buttons */}
+          <div className="flex flex-wrap gap-1.5">
+            <button
+              onClick={() => handleRefineSubmit('이전 결과물보다 훨씬 더 길고 상세하며 풍부하게 작성해줘')}
+              className="text-[10px] bg-slate-950 border border-slate-850 hover:border-brand-orange/45 hover:text-brand-orange text-slate-300 px-2 py-1 rounded transition-colors cursor-pointer"
+            >
+              📝 더 길고 자세하게
+            </button>
+            <button
+              onClick={() => handleRefineSubmit('핵심 내용 위주로 짧고 명확하게 요약해줘')}
+              className="text-[10px] bg-slate-950 border border-slate-850 hover:border-brand-orange/45 hover:text-brand-orange text-slate-300 px-2 py-1 rounded transition-colors cursor-pointer"
+            >
+              ⚡ 핵심 요약 (짧게)
+            </button>
+            <button
+              onClick={() => handleRefineSubmit('영문 이미지 프롬프트를 더 극적이고 현대적이고 영화같은 묘사로 보강해줘')}
+              className="text-[10px] bg-slate-950 border border-slate-850 hover:border-brand-orange/45 hover:text-brand-orange text-slate-300 px-2 py-1 rounded transition-colors cursor-pointer"
+            >
+              🎨 영문 프롬프트 강화
+            </button>
+            <button
+              onClick={() => setShowRefine(!showRefine)}
+              className={`text-[10px] border px-2 py-1 rounded transition-colors cursor-pointer ${
+                showRefine 
+                  ? 'bg-brand-orange/10 border-brand-orange/40 text-brand-orange' 
+                  : 'bg-slate-950 border-slate-850 hover:border-brand-orange/40 text-slate-300'
+              }`}
+            >
+              ✍️ 직접 수정 요청 {showRefine ? '접기' : '열기'}
+            </button>
+          </div>
+
+          {/* Custom Refinement Input Form */}
+          {showRefine && (
+            <div className="flex gap-2 animate-fadeIn">
+              <input
+                type="text"
+                value={customInstruction}
+                onChange={(e) => setCustomInstruction(e.target.value)}
+                placeholder="예: 영문 프롬프트에 드론샷 추가해줘, 본문 해시태그 추가해줘..."
                 className="bg-slate-950 border border-slate-800 rounded-lg px-2 py-1.5 text-xs text-slate-100 placeholder-slate-650 focus:outline-none focus:border-brand-orange transition-colors flex-grow"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') handleRefineSubmit(customInstruction);

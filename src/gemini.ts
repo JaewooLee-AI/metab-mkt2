@@ -2,7 +2,7 @@ import { getMockContent, getMockAnalysis, type AnalysisData } from './mockData';
 import type { PersonaType } from './prompts';
 
 export interface GenerationParams {
-  channel: 'shorts' | 'blog' | 'cafe' | 'sales';
+  channel: 'shorts' | 'blog' | 'cafe' | 'sales' | 'instagram';
   persona: PersonaType;
   sourceText: string;
   apiKey?: string;
