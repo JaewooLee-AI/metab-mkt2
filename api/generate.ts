@@ -2,6 +2,11 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import fs from 'fs';
 import path from 'path';
 
+// Increase Vercel function timeout limit (max 60 seconds) to prevent 504 Gateway Timeout during slow LLM calls
+export const config = {
+  maxDuration: 60,
+};
+
 // --- INLINED PROMPTS LOGIC TO ENSURE VERCEL ISOLATION ---
 const PERSONAS = {
   couple: {
@@ -177,14 +182,14 @@ async function fetchWithRetry(url: string, options: any, retries = 3, delay = 10
 }
 
 export async function handleGenerationLogic(body: any) {
-  const { channel, persona, sourceText, model = 'gemini-3.5-flash', refineInstruction, previousContent } = body;
+  const { channel, persona, sourceText, model = 'gemini-3.5-flash', refineInstruction, previousContent, apiKey: bodyApiKey } = body;
 
   if (!channel || !persona || !sourceText) {
     throw { status: 400, message: '필수 파라미터가 누락되었습니다.' };
   }
 
-  // Load API key from process.env (backend-side)
-  let apiKey = process.env.GEMINI_API_KEY;
+  // Support client override key first, otherwise fallback to process.env (backend-side)
+  let apiKey = bodyApiKey || process.env.GEMINI_API_KEY;
   if (!apiKey) {
     apiKey = process.env.VITE_GEMINI_API_KEY;
   }
@@ -211,7 +216,7 @@ export async function handleGenerationLogic(body: any) {
   }
 
   if (!apiKey) {
-    throw { status: 500, message: '서버에 API Key가 설정되지 않았습니다. .env 파일을 확인해 주세요.' };
+    throw { status: 500, message: '서버에 API Key가 설정되지 않았습니다. 설정 패널에서 API Key를 입력하거나 .env 파일(또는 Vercel 환경 변수)을 확인해 주세요.' };
   }
 
   const systemPrompt = getSystemPrompt(channel, persona);
